@@ -5,11 +5,11 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
-API_KEY = "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"
+API_KEY = "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"  # Replace with your OpenRouter API key
 
 app = FastAPI()
 
-# Allow frontend connections
+# Allow frontend to connect (adjust origins in production)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  
@@ -31,10 +31,13 @@ def fetch_gpt_response(prompt: str) -> str:
     try:
         response = requests.post(API_URL, headers=headers, json=payload, timeout=30)
         result = response.json()
-        if "choices" in result:
+        if "choices" in result and result["choices"]:
+            # Extract the assistant's message content
             return result["choices"][0]["message"]["content"]
+        elif "error" in result:
+            return f"Error: {result['error'].get('message', 'Unknown error')}"
         else:
-            return str(result)
+            return "Unknown response format from API."
     except Exception as e:
         return f"Request failed: {e}"
 
@@ -49,8 +52,10 @@ async def websocket_endpoint(websocket: WebSocket):
 
             # Stream response word by word
             words = gpt_response.split()
-            await websocket.send_text(words)
-            await asyncio.sleep(0.05)  # simulate typing delay
-                
+            streaming_text = ""
+            for word in words:
+                streaming_text += word + " "
+                await websocket.send_text(streaming_text.strip())
+                await asyncio.sleep(0.05)  # simulate typing delay
     except WebSocketDisconnect:
         print("Client disconnected")
