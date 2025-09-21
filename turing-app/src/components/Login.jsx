@@ -5,14 +5,14 @@ import { useState } from 'react';
 import LoginForm from './LoginForm';
 
 export default function Login() {
-    const [dark, setDark] = useState(false);
+    const [dark, setDark] = useState(true);
 
 
   useEffect(() => {
     if (dark) {
       document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.add("dark");
     }
   }, [dark]);
   return (
