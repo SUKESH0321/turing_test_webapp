@@ -1,4 +1,3 @@
-import React from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Trophy, ArrowRightIcon } from "lucide-react";
 // Component ported and enhanced from https://codepen.io/JuanFuentes/pen/eYEeoyE
