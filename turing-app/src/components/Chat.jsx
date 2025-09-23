@@ -7,7 +7,7 @@ export default function Chat() {
   const [connected, setConnected] = useState(false);
 
   React.useEffect(() => {
-    ws.current = new window.WebSocket("ws://localhost:8000/ws/chat");
+    ws.current = new window.WebSocket("ws://127.0.0.1:8000/ws/chat");
     ws.current.onopen = () => setConnected(true);
     ws.current.onclose = () => setConnected(false);
     ws.current.onmessage = (event) => {
